@@ -17,6 +17,16 @@
         </nav>
     </header>
     <main style="flex: 1;">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert-{{ category if category in ['success', 'error'] else 'success' }}" style="margin: 1rem auto; max-width: 1000px;">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
         {% if movies %}
             <div class="movies-grid">
                 {% for movie in movies %}
@@ -32,6 +42,10 @@
                             <p style="font-size: 0.85rem; color: var(--text-muted); overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">{{ movie.synopsis }}</p>
                             
                             <a href="{{ url_for('filme.avaliar_filme', movie_id=movie.id) }}" style="display: block; text-align: center; background-color: var(--border-color); color: white; padding: 0.5rem; border-radius: 6px; text-decoration: none; margin-top: 1rem; font-size: 0.9rem; font-weight: 600;">★ Avaliar / Adicionar</a>
+
+                            <form method="POST" action="{{ url_for('filme.excluir_filme', movie_id=movie.id) }}" onsubmit="return confirm('Deseja excluir este filme do catálogo?');" style="margin-top: 0.5rem;">
+                                <button type="submit" class="btn-danger" style="width: 100%;">Excluir Filme</button>
+                            </form>
                         </div>
                     </div>
                 {% endfor %}

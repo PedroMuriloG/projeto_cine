@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <title>Página Não Encontrada - CineApp</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>CineApp 🎬</h1>
+        <nav>
+            <a href="{{ url_for('filme.home') }}">Home</a>
+            <a href="{{ url_for('filme.listar_filmes') }}">Catálogo</a>
+            <a href="{{ url_for('filme.estante') }}">Minha Estante</a>
+        </nav>
+    </header>
+    <main style="flex: 1; text-align: center; padding: 4rem 2rem;">
+        <h2 style="font-size: 2rem; margin-bottom: 1rem;">404 — Página não encontrada</h2>
+        <p style="color: var(--text-muted); margin-bottom: 2rem;">O endereço que você tentou acessar não existe.</p>
+        <a href="{{ url_for('filme.home') }}" class="btn-accent" style="text-decoration: none; padding: 0.7rem 1.2rem; border-radius: 6px;">Voltar para a Home</a>
+    </main>
+</body>
+</html>

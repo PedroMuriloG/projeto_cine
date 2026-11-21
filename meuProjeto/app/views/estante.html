@@ -30,7 +30,7 @@
         {% if reviews %}
             <div style="display: flex; flex-direction: column; gap: 1.5rem;">
                 {% for review in reviews %}
-                    <div style="display: flex; background: #1e293b; border: 1px solid #334155; border-radius: 10px; overflow: hidden; padding: 1rem; gap: 1.5rem;">
+                    <div style="display: flex; background: #1e293b; border: 1px solid #334155; border-radius: 10px; overflow: hidden; padding: 1rem; gap: 1.5rem; align-items: flex-start;">
                         {% if review.poster_url %}
                             <img src="{{ review.poster_url }}" alt="Poster" style="width: 100px; height: 140px; object-fit: cover; border-radius: 6px;">
                         {% else %}
@@ -45,6 +45,10 @@
                             </p>
                             <p style="color: #cbd5e1; font-style: italic;">"{{ review.content }}"</p>
                         </div>
+
+                        <form method="POST" action="{{ url_for('filme.excluir_avaliacao', review_id=review.id) }}" onsubmit="return confirm('Deseja remover esta avaliação da estante?');">
+                            <button type="submit" class="btn-danger">Excluir</button>
+                        </form>
                     </div>
                 {% endfor %}
             </div>

@@ -1,4 +1,4 @@
-from app.database import Database
+from app.database import DatabaseConnection
 
 
 class Review:
@@ -14,7 +14,6 @@ class Review:
       created_at=None,
       movie_title=None,
       poster_url=None,
-      username=None,
   ):
     self.id = id
     self.user_id = user_id
@@ -23,46 +22,49 @@ class Review:
     self.is_fresh = is_fresh
     self.content = content
     self.created_at = created_at
-    # Atributos extras vindos de JOINs
     self.movie_title = movie_title
     self.poster_url = poster_url
-    self.username = username
 
   @classmethod
-  def create(cls, user_id, movie_id, rating, is_fresh, content):
-    """Cria uma nova avaliação de filme"""
+  def criar(cls, user_id, movie_id, rating, is_fresh, content):
     sql = """
             INSERT INTO reviews (user_id, movie_id, rating, is_fresh, content)
             VALUES (?, ?, ?, ?, ?)
         """
-    with Database.get_db_cursor() as cursor:
-      cursor.execute(sql, (user_id, movie_id, rating, is_fresh, content))
-      return cursor.lastrowid
+    with DatabaseConnection() as db:
+      db.cursor.execute(sql, (user_id, movie_id, rating, is_fresh, content))
+      return db.cursor.lastrowid
 
   @classmethod
-  def find_by_user(cls, user_id):
-    """Busca toda a 'estante' do utilizador (com dados do filme gravado)"""
+  def listar_por_usuario(cls, user_id):
     sql = """
-            SELECT r.*, m.title as movie_title, m.poster_url 
+            SELECT r.*, m.title AS movie_title, m.poster_url
             FROM reviews r
             JOIN movies m ON r.movie_id = m.id
             WHERE r.user_id = ?
             ORDER BY r.created_at DESC
         """
-    with Database.get_db_cursor() as cursor:
-      cursor.execute(sql, (user_id,))
-      rows = cursor.fetchall()
+    with DatabaseConnection() as db:
+      db.cursor.execute(sql, (user_id,))
+      rows = db.cursor.fetchall()
       return [
           cls(
-              id=r["id"],
-              user_id=r["user_id"],
-              movie_id=r["movie_id"],
-              rating=r["rating"],
-              is_fresh=r["is_fresh"],
-              content=r["content"],
-              created_at=r["created_at"],
-              movie_title=r["movie_title"],
-              poster_url=r["poster_url"],
+              id=r['id'],
+              user_id=r['user_id'],
+              movie_id=r['movie_id'],
+              rating=r['rating'],
+              is_fresh=r['is_fresh'],
+              content=r['content'],
+              created_at=r['created_at'],
+              movie_title=r['movie_title'],
+              poster_url=r['poster_url'],
           )
           for r in rows
       ]
+
+  @classmethod
+  def excluir(cls, review_id, user_id):
+    sql = 'DELETE FROM reviews WHERE id = ? AND user_id = ?'
+    with DatabaseConnection() as db:
+      db.cursor.execute(sql, (review_id, user_id))
+      return db.cursor.rowcount > 0
